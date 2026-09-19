@@ -132,8 +132,8 @@ export function renderTerminalSvg(frames: Frame[], settings: Settings): string {
         carets.push({ x, li, start: line.appearAt });
       }
       for (const ch of [...seg.text]) {
-        carets.push({ x, li, start: seg.typedAt });
         x += charW;
+        carets.push({ x, li, start: seg.typedAt });
         void ch;
       }
     }
