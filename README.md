@@ -1,34 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# readme-terminal
 
-## Getting Started
+Build a tiny animated terminal for your GitHub README. Tweak it in the browser, download the SVG, drop it in your repo.
 
-First, run the development server:
+Live app: **https://terminal-readme.vercel.app**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![preview](./public/preview.png)
+
+## How it works
+
+1. Open the app.
+2. Add frames (`cmd` / `out` / `pause` / `table`) and adjust theme, font, typing speed, chrome, username.
+3. Watch the live preview.
+4. Click **download svg** → you get `terminal.svg` (self-contained, SMIL-animated, no JS).
+5. Commit `terminal.svg` to your repo and embed it:
+
+```md
+<img src="./terminal.svg" alt="terminal demo" width="640" />
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Use a relative path (`./terminal.svg`) if the SVG lives in the same repo, or a raw URL (`https://raw.githubusercontent.com/<user>/<repo>/main/terminal.svg`) if embedding cross-repo. GitHub renders SMIL `<animate>` / `<set>` animations in README SVGs, so no GIF or video needed.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Tip: enable **loop** if you want the animation to repeat on GitHub. Otherwise it plays once + holds the final frame.
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- 4 frame types: `cmd` (typed with prompt `user:~$`), `out` (instant output, multiline), `pause`, `table` (2-column ASCII box)
+- 13 themes (dark + light): tokyonight, dracula, github-dark/light, gruvbox, catppuccin mocha/latte, nord, one dark/light, solarized dark/light
+- Settings: typing speed (chars/sec), font size, window chrome (`mac` / `linux` / `none`), cursor, loop, username
+- Live preview with file size readout
+- `?data=` share links (deflate + base64url, validated with zod) — state also autosaves to `localStorage`
+- Static export (`next build`), no backend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Requires Node 20+ and [pnpm](https://pnpm.io) (repo pins `pnpm@11.21.0`).
 
-## Deploy on Vercel
+```bash
+pnpm install
+pnpm dev      # http://localhost:3000
+pnpm build    # static export to ./out
+pnpm start    # serve production build
+pnpm lint     # eslint
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+app/page.tsx          entry, renders <Builder />
+components/builder.tsx  all UI state, preview, download, share link
+lib/svg.ts            SMIL SVG renderer (layout, timing, escaping)
+lib/schema.ts         zod schemas for frames + settings (1–30 frames)
+lib/themes.ts         palette definitions
+lib/codec.ts          encode/decode ?data= share payloads (fflate)
+lib/presets.ts        default demo script
+```
+
+### Frame model
+
+| type    | fields | notes |
+| ------- | ------ | ----- |
+| `cmd`   | `cmd`, `prompt?` | typed char-by-char at `typingSpeed` |
+| `out`   | `text` | split on `\n`, appears line-by-line |
+| `pause` | `ms` (0–5000) | advances the timeline |
+| `table` | `title?`, `headers` ([2 strings]), `rows` (≤20) | rendered as ASCII box, numbers highlighted |
+
+Limits enforced by schema: max 30 frames, command ≤200 chars, output ≤2000 chars, decoded payload ≤8000 chars.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+[MIT](./LICENSE) © snehasishcodes
