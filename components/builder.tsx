@@ -132,11 +132,11 @@ export function Builder() {
   };
 
   return (
-    <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[1fr_420px]">
-      <div className="flex min-h-0 flex-col gap-4 overflow-hidden">
+    <div className="grid flex-1 gap-6 lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-hidden">
         <Card className="shrink-0 p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 space-y-1">
               <h1 className="text-lg font-bold tracking-tight">readme-terminal</h1>
               <p className="text-sm text-muted-foreground">
                 make a tiny terminal animation for your readme. tweak it here, download the
@@ -151,12 +151,12 @@ export function Builder() {
             </div>
           </div>
         </Card>
-        <Card className="flex min-h-0 flex-col p-6">
+        <Card className="flex min-w-0 flex-col p-4 sm:p-6 lg:min-h-0">
           <div className="mb-3 flex shrink-0 items-center justify-between text-sm text-muted-foreground">
             <span>preview</span>
             <span className="font-mono">{(svg.length / 1024).toFixed(1)} kb</span>
           </div>
-          <div ref={previewRef} className="min-h-0 overflow-auto rounded-lg" dangerouslySetInnerHTML={{ __html: svg }} />
+          <div ref={previewRef} className="w-full overflow-x-auto rounded-lg lg:min-h-0 lg:flex-1 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full [&>svg]:min-w-[320px]" dangerouslySetInnerHTML={{ __html: svg }} />
         </Card>
         <Card className="shrink-0 p-4">
           <div className="flex gap-2">
@@ -165,7 +165,7 @@ export function Builder() {
           </div>
         </Card>
       </div>
-      <div className="flex min-h-0 flex-col gap-4 overflow-hidden">
+      <div className="flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-hidden">
         <Card className="shrink-0 space-y-4 p-4">
           <div className="grid grid-cols-2 gap-3">
             <Field label="theme">
@@ -205,7 +205,7 @@ export function Builder() {
           </div>
         </Card>
 
-        <Card className="flex min-h-0 flex-col gap-3 p-4">
+        <Card className="flex min-w-0 flex-col gap-3 p-4 lg:min-h-0">
           <div className="shrink-0 space-y-2">
             <h2 className="text-sm font-semibold">frames ({frames.length}/30)</h2>
             <div className="grid grid-cols-4 gap-1">
@@ -214,7 +214,7 @@ export function Builder() {
               ))}
             </div>
           </div>
-          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+          <div className="max-h-[480px] space-y-2 overflow-y-auto pr-1 lg:max-h-none lg:min-h-0 lg:flex-1">
             {frames.map((f, i) => (
               <div key={i} className="rounded-lg border p-2.5">
                 <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
